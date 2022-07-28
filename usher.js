@@ -1,3 +1,4 @@
+//return 0 for offline, 1 for online, 2 for channel doesn't exit
 function isChannelLive(channelName){
     const exec = require('child_process').execSync;
     let command1 = 'curl -s '; 
@@ -8,18 +9,21 @@ function isChannelLive(channelName){
     let liveStatus;
     let stdout = exec(command1+magicLink1).toString();
     let result = JSON.parse(stdout);
+    if (result.data.streamPlaybackAccessToken === null ){
+        return 2;
+    }
     let token = encodeURIComponent(result.data.streamPlaybackAccessToken.value);
     let sig = result.data.streamPlaybackAccessToken.signature;
     let magicLink2 = formatURL2(channelName,sig,token);
     let stdout1 =    exec(command1+magicLink2).toString();
     if (stdout1.includes("transcode_does_not_exist")){
-        return false;
+        return 0;
     }
     else if (stdout1.includes('#EXTM3U')){
-        return true;
+        return 1;
     }
     else{
-        return false;
+        return 0;
     }
 };
 

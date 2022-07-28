@@ -1,10 +1,17 @@
 const UsherService = require('./usher.js');
-let streamID1 = 'lck_korea';
+let streamID = process.argv[2];
+if (streamID === null || streamID === undefined){
+	console.log("Error: no stream name input");
+	process.exit(1);
+}
 while(true){
-    if (UsherService.isChannelLive(streamID1) === true){
-        console.log(`${streamID1} is online`);
+    if (UsherService.isChannelLive(streamID) === 1){
+        console.log(`${streamID} is online.`);
     }
-    else{
-        console.log(`${streamID1} is offline`);
+    else if (UsherService.isChannelLive(streamID) === 0){
+        console.log(`${streamID} is offline.`);
+    }
+    else if (UsherService.isChannelLive(streamID) === 2){
+        console.log(`${streamID} does not exist.`);
     }
 }
